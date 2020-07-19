@@ -3,34 +3,35 @@ const moment = require('moment');
 
 const UserSchema = new Schema(
     {
-        userName: {
-            type: String,
-            required: true,
-            trim: true,
+        username:{
+            type:String,
             unique: true,
+            required: 'You must provide a unique username',
+            trim: true
+
         },
-        email: {
+        email:{
             type: String,
-            required: true,
+            required: 'You must provide a unique email address',
             unique: true,
-            validator: {
-                $of: [
-                  {email: {$regex: /@mongodb\.com$/}}
-                ]
-              },
-        thoughts:[
-         {
+            match:[/(.+)@(.+){2,}\.(.+){2,}/,'Please provide a valid email']
+        },
+        thoughts:[{
             type: Schema.Types.ObjectId,
             ref: 'Thought'
-        }
-      ],
-        friends: [
-            {
+        }]
+        ,
+        friends:[{
             type: Schema.Types.ObjectId,
-            ref: 'User'
-            }
-        ]
-    }
+            ref:'User'
+        }]
+    },
+    {
+        toJSON: {
+           virtuals: true,
+           getters: true
+        }
+     }
 );
 
 UserSchema.virtual('friendCount').get(function() {
